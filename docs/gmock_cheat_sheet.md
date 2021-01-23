@@ -179,7 +179,7 @@ Example usage:
 To customize the default action for a particular method of a specific mock
 object, use `ON_CALL()`. `ON_CALL()` has a similar syntax to `EXPECT_CALL()`,
 but it is used for setting default behaviors (when you do not require that the
-mock method is called). See [here](cook_book.md#UseOnCall) for a more detailed
+mock method is called). See [here](gmock_cook_book.md#UseOnCall) for a more detailed
 discussion.
 
 ```cpp
@@ -289,8 +289,7 @@ will be changed.
 `IsTrue` and `IsFalse` are useful when you need to use a matcher, or for types
 that can be explicitly converted to Boolean, but are not implicitly converted to
 Boolean. In other cases, you can use the basic
-[`EXPECT_TRUE` and `EXPECT_FALSE`](../../googletest/docs/primer#basic-assertions)
-assertions.
+[`EXPECT_TRUE` and `EXPECT_FALSE`](primer.md#basic-assertions) assertions.
 
 ### Floating-Point Matchers {#FpMatchers}
 
@@ -340,9 +339,8 @@ The `argument` can be either a C string or a C++ string object:
 
 `ContainsRegex()` and `MatchesRegex()` take ownership of the `RE` object. They
 use the regular expression syntax defined
-[here](../../googletest/docs/advanced.md#regular-expression-syntax). All of
-these matchers, except `ContainsRegex()` and `MatchesRegex()` work for wide
-strings as well.
+[here](advanced.md#regular-expression-syntax). All of these matchers, except
+`ContainsRegex()` and `MatchesRegex()` work for wide strings as well.
 
 ### Container Matchers
 
@@ -420,7 +418,9 @@ messages, you can use:
 <!-- mdformat off(no multiline tables) -->
 | Matcher                   | Description                                     |
 | :------------------------ | :---------------------------------------------- |
+| `Address(m)`              | the result of `std::addressof(argument)` matches `m`. |
 | `Pointee(m)`              | `argument` (either a smart pointer or a raw pointer) points to a value that matches matcher `m`. |
+| `Pointer(m)`              | `argument` (either a smart pointer or a raw pointer) contains a pointer that matches `m`. `m` will match against the raw pointer regardless of the type of `argument`. |
 | `WhenDynamicCastTo<T>(m)` | when `argument` is passed through `dynamic_cast<T>()`, it matches matcher `m`. |
 <!-- mdformat on -->
 
@@ -475,7 +475,7 @@ You can make a matcher from one or more other matchers:
 | Matcher                 | Description                           |
 | :---------------------- | :------------------------------------ |
 | `MatcherCast<T>(m)`     | casts matcher `m` to type `Matcher<T>`. |
-| `SafeMatcherCast<T>(m)` | [safely casts](cook_book.md#casting-matchers) matcher `m` to type `Matcher<T>`. |
+| `SafeMatcherCast<T>(m)` | [safely casts](gmock_cook_book.md#casting-matchers) matcher `m` to type `Matcher<T>`. |
 | `Truly(predicate)`      | `predicate(argument)` returns something considered by C++ to be true, where `predicate` is a function or functor. |
 <!-- mdformat on -->
 
@@ -540,7 +540,7 @@ which must be a permanent callback.
 | `DeleteArg<N>()` | Delete the `N`-th (0-based) argument, which must be a pointer. |
 | `SaveArg<N>(pointer)` | Save the `N`-th (0-based) argument to `*pointer`. |
 | `SaveArgPointee<N>(pointer)` | Save the value pointed to by the `N`-th (0-based) argument to `*pointer`. |
-| `SetArgReferee<N>(value)` | Assign value to the variable referenced by the `N`-th (0-based) argument. |
+| `SetArgReferee<N>(value)` | Assign `value` to the variable referenced by the `N`-th (0-based) argument. |
 | `SetArgPointee<N>(value)` | Assign `value` to the variable pointed by the `N`-th (0-based) argument. |
 | `SetArgumentPointee<N>(value)` | Same as `SetArgPointee<N>(value)`. Deprecated. Will be removed in v1.7.0. |
 | `SetArrayArgument<N>(first, last)` | Copies the elements in source range [`first`, `last`) to the array pointed to by the `N`-th (0-based) argument, which can be either a pointer or an iterator. The action does not take ownership of the elements in the source range. |
@@ -772,7 +772,7 @@ class MockFunction<R(A1, ..., An)> {
 };
 ```
 
-See this [recipe](cook_book.md#using-check-points) for one application of it.
+See this [recipe](gmock_cook_book.md#using-check-points) for one application of it.
 
 ## Flags
 

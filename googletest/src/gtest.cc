@@ -2724,6 +2724,7 @@ TestInfo::TestInfo(const std::string& a_test_suite_name,
       should_run_(false),
       is_disabled_(false),
       matches_filter_(false),
+      is_in_another_shard_(false),
       factory_(factory),
       result_() {}
 
@@ -2737,7 +2738,7 @@ namespace internal {
 //
 // Arguments:
 //
-//   test_suite_name:   name of the test suite
+//   test_suite_name:  name of the test suite
 //   name:             name of the test
 //   type_param:       the name of the test's type parameter, or NULL if
 //                     this is not a typed or a type-parameterized test.
@@ -2943,7 +2944,7 @@ int TestSuite::total_test_count() const {
 //
 // Arguments:
 //
-//   name:         name of the test suite
+//   a_name:       name of the test suite
 //   a_type_param: the name of the test suite's type parameter, or NULL if
 //                 this is not a typed or a type-parameterized test suite.
 //   set_up_tc:    pointer to the function that sets up the test suite
@@ -3268,7 +3269,8 @@ bool ShouldUseColor(bool stdout_is_tty) {
 // This routine must actually emit the characters rather than return a string
 // that would be colored when printed, as can be done on Linux.
 
-static void ColoredPrintf(GTestColor color, const char* fmt, ...) {
+GTEST_ATTRIBUTE_PRINTF_(2, 3)
+static void ColoredPrintf(GTestColor color, const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
 
@@ -5558,10 +5560,10 @@ class TestSuiteNameIs {
 // Arguments:
 //
 //   test_suite_name: name of the test suite
-//   type_param:     the name of the test suite's type parameter, or NULL if
-//                   this is not a typed or a type-parameterized test suite.
-//   set_up_tc:      pointer to the function that sets up the test suite
-//   tear_down_tc:   pointer to the function that tears down the test suite
+//   type_param:      the name of the test suite's type parameter, or NULL if
+//                    this is not a typed or a type-parameterized test suite.
+//   set_up_tc:       pointer to the function that sets up the test suite
+//   tear_down_tc:    pointer to the function that tears down the test suite
 TestSuite* UnitTestImpl::GetTestSuite(
     const char* test_suite_name, const char* type_param,
     internal::SetUpTestSuiteFunc set_up_tc,
@@ -6274,7 +6276,7 @@ static const char kColorEncodedHelpMessage[] =
     "      List the names of all tests instead of running them. The name of\n"
     "      TEST(Foo, Bar) is \"Foo.Bar\".\n"
     "  @G--" GTEST_FLAG_PREFIX_
-    "filter=@YPOSTIVE_PATTERNS"
+    "filter=@YPOSITIVE_PATTERNS"
     "[@G-@YNEGATIVE_PATTERNS]@D\n"
     "      Run only the tests whose name matches one of the positive patterns "
     "but\n"
@@ -6553,24 +6555,31 @@ void InitGoogleTest() {
 std::string TempDir() {
 #if defined(GTEST_CUSTOM_TEMPDIR_FUNCTION_)
   return GTEST_CUSTOM_TEMPDIR_FUNCTION_();
-#endif
-
-#if GTEST_OS_WINDOWS_MOBILE
+#elif GTEST_OS_WINDOWS_MOBILE
   return "\\temp\\";
 #elif GTEST_OS_WINDOWS
   const char* temp_dir = internal::posix::GetEnv("TEMP");
-  if (temp_dir == nullptr || temp_dir[0] == '\0')
+  if (temp_dir == nullptr || temp_dir[0] == '\0') {
     return "\\temp\\";
-  else if (temp_dir[strlen(temp_dir) - 1] == '\\')
+  } else if (temp_dir[strlen(temp_dir) - 1] == '\\') {
     return temp_dir;
-  else
+  } else {
     return std::string(temp_dir) + "\\";
+  }
 #elif GTEST_OS_LINUX_ANDROID
   const char* temp_dir = internal::posix::GetEnv("TEST_TMPDIR");
-  if (temp_dir == nullptr || temp_dir[0] == '\0')
+  if (temp_dir == nullptr || temp_dir[0] == '\0') {
     return "/data/local/tmp/";
-  else
+  } else {
     return temp_dir;
+  }
+#elif GTEST_OS_LINUX
+  const char* temp_dir = internal::posix::GetEnv("TEST_TMPDIR");
+  if (temp_dir == nullptr || temp_dir[0] == '\0') {
+    return "/tmp/";
+  } else {
+    return temp_dir;
+  }
 #else
   return "/tmp/";
 #endif  // GTEST_OS_WINDOWS_MOBILE

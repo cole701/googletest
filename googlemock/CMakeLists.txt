@@ -42,7 +42,7 @@ else()
   cmake_policy(SET CMP0048 NEW)
   project(gmock VERSION ${GOOGLETEST_VERSION} LANGUAGES CXX C)
 endif()
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.8.12)
 
 if (COMMAND set_up_hermetic_build)
   set_up_hermetic_build()
@@ -137,20 +137,6 @@ if (gmock_build_tests)
   # This must be set in the root directory for the tests to be run by
   # 'make test' or ctest.
   enable_testing()
-
-  if (WIN32)
-    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/RunTest.ps1"
-         CONTENT
-"$project_bin = \"${CMAKE_BINARY_DIR}/bin/$<CONFIG>\"
-$env:Path = \"$project_bin;$env:Path\"
-& $args")
-  elseif (MINGW OR CYGWIN)
-    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/RunTest.ps1"
-         CONTENT
-"$project_bin = (cygpath --windows ${CMAKE_BINARY_DIR}/bin)
-$env:Path = \"$project_bin;$env:Path\"
-& $args")
-  endif()
 
   if (MINGW OR CYGWIN)
     if (CMAKE_VERSION VERSION_LESS "2.8.12")

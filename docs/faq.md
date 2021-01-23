@@ -217,6 +217,18 @@ particular, using it in googletest comparison assertions (`EXPECT_EQ`, etc) will
 generate an "undefined reference" linker error. The fact that "it used to work"
 doesn't mean it's valid. It just means that you were lucky. :-)
 
+If the declaration of the static data member is `constexpr` then it is
+implicitly an `inline` definition, and a separate definition in `foo.cc` is not
+needed:
+
+```c++
+// foo.h
+class Foo {
+  ...
+  static constexpr int kBar = 100;  // Defines kBar, no need to do it in foo.cc.
+};
+```
+
 ## Can I derive a test fixture from another?
 
 Yes.
@@ -269,7 +281,7 @@ If necessary, you can continue to derive test fixtures from a derived fixture.
 googletest has no limit on how deep the hierarchy can be.
 
 For a complete example using derived test fixtures, see
-[sample5_unittest.cc](../samples/sample5_unittest.cc).
+[sample5_unittest.cc](../googletest/samples/sample5_unittest.cc).
 
 ## My compiler complains "void value not ignored as it ought to be." What does this mean?
 
