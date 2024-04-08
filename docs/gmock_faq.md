@@ -1,8 +1,4 @@
-## Legacy gMock FAQ {#GMockFaq}
-
-<!-- GOOGLETEST_CM0021 DO NOT DELETE -->
-
-<!-- GOOGLETEST_CM0035 DO NOT DELETE -->
+# Legacy gMock FAQ
 
 ### When I call a method on my mock object, the method for the real object is invoked instead. What's the problem?
 
@@ -83,8 +79,6 @@ void Bar(int* p);         // Neither p nor *p is const.
 void Bar(const int* p);  // p is not const, but *p is.
 ```
 
-<!-- GOOGLETEST_CM0030 DO NOT DELETE -->
-
 ### I can't figure out why gMock thinks my expectations are not satisfied. What should I do?
 
 You might want to run your test with `--gmock_verbose=info`. This flag lets
@@ -93,9 +87,9 @@ trace, you'll gain insights on why the expectations you set are not met.
 
 If you see the message "The mock function has no default action set, and its
 return type has no default value set.", then try
-[adding a default action](gmock_for_dummies.md#DefaultValue). Due to a known
-issue, unexpected calls on mocks without default actions don't print out a
-detailed comparison between the actual arguments and the expected arguments.
+[adding a default action](gmock_cheat_sheet.md#OnCall). Due to a known issue,
+unexpected calls on mocks without default actions don't print out a detailed
+comparison between the actual arguments and the expected arguments.
 
 ### My program crashed and `ScopedMockLog` spit out tons of messages. Is it a gMock bug?
 
@@ -127,8 +121,6 @@ using ::testing::_;
   EXPECT_CALL(foo, Bar(_))
       .Times(0);
 ```
-
-<!-- GOOGLETEST_CM0031 DO NOT DELETE -->
 
 ### I have a failed test where gMock tells me TWICE that a particular expectation is not satisfied. Isn't this redundant?
 
@@ -377,8 +369,8 @@ Usually, if your action is for a particular function type, defining it using
 different types (e.g. if you are defining `Return(*value*)`),
 `MakePolymorphicAction()` is easiest. Sometimes you want precise control on what
 types of functions the action can be used in, and implementing `ActionInterface`
-is the way to go here. See the implementation of `Return()` in
-`testing/base/public/gmock-actions.h` for an example.
+is the way to go here. See the implementation of `Return()` in `gmock-actions.h`
+for an example.
 
 ### I use SetArgPointee() in WillOnce(), but gcc complains about "conflicting return type specified". What does it mean?
 
